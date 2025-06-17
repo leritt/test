@@ -173,46 +173,17 @@
     <div class="container">
         <h1>Создать заявку на перевозку</h1>
         <form id="create-order-form">
-            <label for="transportDate" class="required-field">Дата и время перевозки:</label>
-            <input type="datetime-local" id="transportDate" name="transportDate" required>
+            <label>Дата и время:</label>
+            <input type="datetime-local" name="reservationDateTime" required>
 
-            <label for="cargoType" class="required-field">Тип груза:</label>
-            <select id="cargoType" name="cargoType" required>
-                <option value="">Выберите тип груза</option>
-                <option value="Хрупкое">Хрупкое</option>
-                <option value="Скоропортящееся">Скоропортящееся</option>
-                <option value="Требуется рефрижератор">Требуется рефрижератор</option>
-                <option value="Животные">Животные</option>
-                <option value="Жидкость">Жидкость</option>
-                <option value="Мебель">Мебель</option>
-                <option value="Мебель">Мусор</option>
-            </select>
+            <label>Количество гостей:</label>
+            <input type="number" name="guests" min="1" max="10" required>
 
-            <div id="customCargoField" style="display: none;">
-                <label for="customCargo" class="required-field">Укажите тип груза:</label>
-                <input type="text" id="customCargo" name="customCargo">
-            </div>
+            <label>Контактный телефон:</label>
+            <input type="tel" id="phone" name="phone" placeholder="+7(___)-___-__-__" required
+                pattern="\+7\(\d{3}\)-\d{3}-\d{2}-\d{2}" title="Формат: +7(XXX)-XXX-XX-XX">
 
-            <label for="cargoWeight" class="required-field">Вес груза (кг):</label>
-            <input type="number" id="cargoWeight" name="cargoWeight" min="1" required>
-
-            <label class="required-field">Габариты груза (см):</label>
-            <div class="dimensions-container">
-                <input type="number" id="length" name="length" placeholder="Длина" min="1" required>
-                <input type="number" id="width" name="width" placeholder="Ширина" min="1" required>
-                <input type="number" id="height" name="height" placeholder="Высота" min="1" required>
-            </div>
-
-            <label for="fromAddress" class="required-field">Адрес отправления:</label>
-            <input type="text" id="fromAddress" name="fromAddress" required>
-
-            <label for="toAddress" class="required-field">Адрес доставки:</label>
-            <input type="text" id="toAddress" name="toAddress" required>
-
-            <label for="phone" class="required-field">Контактный телефон:</label>
-            <input type="tel" id="phone" name="phone" placeholder="+7(XXX)-XXX-XX-XX" required>
-
-            <button type="submit" class="btn">Создать заявку</button>
+            <button type="submit">Забронировать</button>
         </form>
     </div>
     <script src="/js/create-order.js"></script>

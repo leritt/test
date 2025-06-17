@@ -19,7 +19,7 @@
       --border-color: #ddd;
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    
+
 
     * {
       margin: 0;
@@ -282,13 +282,10 @@
           <th>ID</th>
           <th>Клиент</th>
           <th>Телефон</th>
-          <th>Тип груза</th>
-          <th>Вес (кг)</th>
-          <th>Габариты</th>
-          <th>Откуда</th>
-          <th>Куда</th>
-          <th>Дата</th>
+          <th>Кол-во гостей</th>
+          <th>Дата брони</th>
           <th>Статус</th>
+          <th>Действия</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -325,28 +322,23 @@
           const row = document.createElement('tr');
 
           row.innerHTML = `
-  <td>${order.id}</td>
-  <td>${order.surname} ${order.name} ${order.patrinymic}</td>
-  <td>${order.phone}</td>
-  <td>${order.cargo_type}</td>
-  <td>${order.cargo_weight}</td>
-  <td>${order.length}×${order.width}×${order.height} см</td>
-  <td>${order.from_address}</td>
-  <td>${order.to_address}</td>
-  <td>${new Date(order.transport_date).toLocaleString()}</td>
-  <td class="status-controls">
-    <select class="status-select">
-      <option value="новая" ${order.status === 'новая' ? 'selected' : ''}>Новая</option>
-      <option value="в работе" ${order.status === 'в работе' ? 'selected' : ''}>В работе</option>
-      <option value="выполнено" ${order.status === 'выполнено' ? 'selected' : ''}>Выполнено</option>
-      <option value="отменено" ${order.status === 'отменено' ? 'selected' : ''}>Отменено</option>
-    </select>
-    <div class="action-buttons">
-      <button class="update-btn">Сохранить</button>
-      <button class="delete-btn">Удалить</button>
-    </div>
-  </td>
-`;
+    <td>${order.id}</td>
+    <td>${order.surname} ${order.name}</td>
+    <td>${order.phone}</td>
+    <td>${order.guests}</td>
+    <td>${new Date(order.transport_date).toLocaleString()}</td>
+    <td class="status-controls">
+      <select class="status-select">
+        <option value="новая" ${order.status === 'новая' ? 'selected' : ''}>Новая</option>
+        <option value="подтверждена" ${order.status === 'подтверждена' ? 'selected' : ''}>Подтверждена</option>
+        <option value="отменена" ${order.status === 'отменена' ? 'selected' : ''}>Отменена</option>
+      </select>
+      <div class="action-buttons">
+        <button class="update-btn">Сохранить</button>
+        <button class="delete-btn">Удалить</button>
+      </div>
+    </td>
+  `;
 
           const statusSelect = row.querySelector('.status-select');
           const updateBtn = row.querySelector('.update-btn');
