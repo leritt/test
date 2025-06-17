@@ -293,6 +293,16 @@
   </div>
 
   <script>
+    // Функция для форматирования телефонного номера
+    function formatPhoneNumber(phone) {
+      const phoneDigits = phone.replace(/\D/g, '');
+      if (phoneDigits.length >= 11) {
+        return `+7(${phoneDigits.substring(1, 4)})-${phoneDigits.substring(4, 7)}-${phoneDigits.substring(7, 9)}-${phoneDigits.substring(9, 11)}`;
+      }
+      // Если номер неполный, покажем как есть
+      return phone;
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
       // Проверка авторизации администратора
       const isAdmin = localStorage.getItem('isAdmin') === 'true';
@@ -301,10 +311,12 @@
         window.location.href = '/admin-login.html';
         return;
       }
+
       document.getElementById('logout-btn').addEventListener('click', () => {
         localStorage.clear(); // Очищает весь localStorage
         window.location.href = '/login.html';
       });
+
       try {
         const response = await fetch('/admin/orders');
         if (!response.ok) {
@@ -314,31 +326,32 @@
         const tableBody = document.querySelector('#ordersTable tbody');
 
         if (orders.length === 0) {
-          tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Нет заявок</td></tr>';
+          tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет заявок</td></tr>';
           return;
         }
 
         orders.forEach(order => {
           const row = document.createElement('tr');
+          const formattedPhone = formatPhoneNumber(order.phone);
 
           row.innerHTML = `
-    <td>${order.id}</td>
-    <td>${order.surname} ${order.name}</td>
-    <td>${order.phone}</td>
-    <td>${order.guests}</td>
-    <td>${new Date(order.transport_date).toLocaleString()}</td>
-    <td class="status-controls">
-      <select class="status-select">
-        <option value="новая" ${order.status === 'новая' ? 'selected' : ''}>Новая</option>
-        <option value="подтверждена" ${order.status === 'подтверждена' ? 'selected' : ''}>Подтверждена</option>
-        <option value="отменена" ${order.status === 'отменена' ? 'selected' : ''}>Отменена</option>
-      </select>
-      <div class="action-buttons">
-        <button class="update-btn">Сохранить</button>
-        <button class="delete-btn">Удалить</button>
-      </div>
-    </td>
-  `;
+            <td>${order.id}</td>
+            <td>${order.surname} ${order.name}</td>
+            <td>${formattedPhone}</td>
+            <td>${order.guests}</td>
+            <td>${new Date(order.transport_date).toLocaleString()}</td>
+            <td class="status-controls">
+              <select class="status-select">
+                <option value="новая" ${order.status === 'новая' ? 'selected' : ''}>Новая</option>
+                <option value="подтверждена" ${order.status === 'подтверждена' ? 'selected' : ''}>Подтверждена</option>
+                <option value="отменена" ${order.status === 'отменена' ? 'selected' : ''}>Отменена</option>
+              </select>
+              <div class="action-buttons">
+                <button class="update-btn">Сохранить</button>
+                <button class="delete-btn">Удалить</button>
+              </div>
+            </td>
+          `;
 
           const statusSelect = row.querySelector('.status-select');
           const updateBtn = row.querySelector('.update-btn');
@@ -364,7 +377,6 @@
             }
           });
 
-          // Вот сюда вставляем обработчик для кнопки удаления
           const deleteBtn = row.querySelector('.delete-btn');
 
           deleteBtn.addEventListener('click', async () => {
@@ -380,7 +392,7 @@
 
                   // Если это была последняя заявка, покажем сообщение
                   if (tableBody.querySelectorAll('tr').length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Нет заявок</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет заявок</td></tr>';
                   }
                 } else {
                   throw new Error('Ошибка удаления');

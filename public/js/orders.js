@@ -46,13 +46,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         orders.forEach(order => {
+            // Форматируем телефонный номер
+            const phoneDigits = order.phone.replace(/\D/g, '');
+            let formattedPhone = '+7(XXX)-XXX-XX-XX'; // Значение по умолчанию
+
+            if (phoneDigits.length >= 11) {
+                formattedPhone = `+7(${phoneDigits.substring(1, 4)})-${phoneDigits.substring(4, 7)}-${phoneDigits.substring(7, 9)}-${phoneDigits.substring(9, 11)}`;
+            } else if (phoneDigits.length > 0) {
+                // Частичное форматирование, если номер неполный
+                formattedPhone = `+7(${phoneDigits.substring(1, 4) || 'XXX'})-${phoneDigits.substring(4, 7) || 'XXX'}-${phoneDigits.substring(7, 9) || 'XX'}-${phoneDigits.substring(9, 11) || 'XX'}`;
+            }
+
             const li = document.createElement('li');
             li.innerHTML = `
   <div class="order-card" data-order-id="${order.id}">
     <h3>Бронирование #${order.id}</h3>
     <p><strong>Дата и время:</strong> ${new Date(order.reservation_datetime).toLocaleString()}</p>
     <p><strong>Гостей:</strong> ${order.guests}</p>
-    <p><strong>Телефон:</strong> ${order.phone.replace(/(\+7)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1($2)-$3-$4-$5')}</p>
+    <p><strong>Телефон:</strong> ${formattedPhone}</p>
     <p><strong>Статус:</strong> ${order.status}</p>
 
     <div class="review-section">
