@@ -1,0 +1,641 @@
+1) Структура
+my-cleaning-portal/
+│
+├── public/            # Статические файлы (HTML, CSS, JS)
+│   ├── css/           # Стили
+│   ├── js/            # Скрипты
+│   └── index.html     # Главная страница
+│
+├── server.js          # Основной сервер
+├── package.json       # Информация о проекте
+└── README.md          # Описание проекта
+2)Инициализация проекта
+mkdir my-cleaning-portal
+cd my-cleaning-portal
+npm init -y
+npm install express
+3)Создание файла server.js с содержимым
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = 3000;
+
+// Подключение статических файлов
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Маршрут для главной страницы
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Запуск сервера
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
+});
+4)файл index.html с минимальным содержимым
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Не Сам</title>
+</head>
+<body>
+    <h1>Добро пожаловать в портал клининговых услуг!</h1>
+</body>
+</html>
+5)Запустить сервер в браузере http://localhost:3000
+node server.js в терминале
+6)Создание файла styles.css в папке css
+/* Сброс стандартных стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Базовый стиль страницы */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Контейнер */
+.container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+7)Подключение стилей к главной странице
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Не Сам</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Добро пожаловать в портал клининговых услуг!</h1>
+        <p>Выберите действие:</p>
+        <a href="/register" class="btn">Регистрация</a>
+        <a href="/login" class="btn">Авторизация</a>
+    </div>
+</body>
+</html>
+8)Добавление стилей для кнопок
+/* Кнопки */
+.btn {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+9)Обновить server.js
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+10)пуск-pgadmin-servers-postgresql дважды-create-database-cleaning_portal как название-save
+11)В верхнем меню выбери "Query Tool" (Инструмент запросов) и ввести запрос
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+	surname VARCHAR(100) NOT NULL,
+	patrinymic VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(15) NOT NULL,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+12)Установка PostgreSQL для Node.js (npm install pg)
+13)Создание файла для подключения в корне проекта db.js
+const { Pool } = require('pg'); // Импортируем Pool из библиотеки pg для работы с базой данных.
+
+const pool = new Pool({
+    user: 'postgres',            // Имя пользователя PostgreSQL
+    host: 'localhost',           // Адрес базы данных (localhost, если на этом же компьютере)
+    database: 'cleaning_portal', // Имя базы данных, которую ты создала в pgAdmin
+    password: '',   // Пароль для подключения (тот, который ты установила при установке PostgreSQL)
+    port: 5432,                  // Порт (по умолчанию 5432)
+});
+
+// Экспортируем подключение, чтобы использовать в других частях проекта
+module.exports = pool;
+14)Проверка соответствия портов!
+15)проверка подключения в файл server.js
+const express = require('express');
+const app = express();
+const pool = require('./db'); // Импортируем подключение к базе данных
+
+app.get('/', async (req, res) => {
+    try {
+        // Пытаемся выполнить запрос к базе данных, чтобы проверить подключение
+        const result = await pool.query('SELECT NOW()');
+        res.send(`Текущее время с сервера PostgreSQL: ${result.rows[0].now}`);
+    } catch (err) {
+        console.error('Ошибка подключения:', err);
+        res.send('Ошибка подключения к базе данных');
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
+});
+16)запуск приложения. если всё верно: Текущее время с сервера PostgreSQL: 2025-01-22 14:15:00.123456
+17)Добавим пример кода для регистрации пользователя через форму
+!обязательно проверять все данные таблиц во всех файлах, чтобы всё совпадало по смыслу иначе ничего не выведет!
+Вот так на данный момент выглядит server.js
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = 3000;
+const pool = require('./db'); // Импортируем подключение к базе данных
+app.use(express.json());
+
+// Подключение статических файлов
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Маршрут для главной страницы
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Роут для обработки регистрации
+app.post('/register', async (req, res) => {
+  const { name, surname, patrinymic, phone, email, login, password } = req.body;
+
+  // Простой пример валидации (можно усложнить по необходимости)
+  if (!name || !surname || !patrinymic || !phone || !email || !login || !password) {
+      return res.status(400).json({ message: 'Все поля обязательны для заполнения' });
+  }
+
+  try {
+      // Вставка данных в таблицу
+      const result = await pool.query(
+          `INSERT INTO users (name, surname, patrinymic, phone, email, login, password)
+          VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+          [name, surname, patrinymic, phone, email, login, password]
+      );
+
+      res.status(201).json({ message: 'Пользователь зарегистрирован!', userId: result.rows[0].id });
+  } catch (error) {
+      console.error('Ошибка регистрации:', error);
+      res.status(500).json({ message: 'Ошибка сервера при регистрации' });
+  }
+});
+
+
+// Запуск сервера
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
+});
+18) Обновление register.html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Регистрация</h1>
+        <form id="registration-form">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="surname">Фамилия:</label>
+            <input type="text" id="surname" name="surname" required>
+
+            <label for="patrinymic">Отчество:</label>
+            <input type="text" id="patrinymic" name="patrinymic" required>
+            
+            <label for="phone">Телефон:</label>
+            <input type="number" id="phone" name="phone" pattern="^\\+7\\(\\d{3}\\)-\\d{3}-\\d{2}-\\d{2}$" required>
+            
+            <label for="email">Электронная почта:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" required>
+            
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" minlength="6" required>
+            
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <p id="message"></p>
+    </div>
+    <script src="/js/register.js"></script>
+    </div>
+</body>
+</html>
+19)На данном этапе должны были добавлять в server.js логику, но оно уже показано в шаге 17
+// Роут для обработки регистрации
+app.post('/register', async (req, res)
+20)Создание файла /js/register.js
+document.getElementById('registration-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  try {
+      const response = await fetch('/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      const message = document.getElementById('message');
+      if (response.ok) {
+          message.textContent = result.message;
+          message.style.color = 'green';
+      } else {
+          message.textContent = result.message;
+          message.style.color = 'red';
+      }
+  } catch (err) {
+      console.error('Ошибка:', err);
+  }
+});
+21)Добавляем в server.js после app.post(/register)
+// Обработчик авторизации
+app.post('/login', async (req, res) => {
+    const { login, password } = req.body;
+
+    if (!login || !password) {
+        return res.status(400).json({ message: 'Логин и пароль обязательны для заполнения' });
+    }
+
+    try {
+        const result = await pool.query('SELECT * FROM users WHERE login = $1', [login]);
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: 'Пользователь не найден' });
+        }
+
+        const user = result.rows[0];
+
+        if (user.password !== password) {
+            return res.status(401).json({ message: 'Неверный пароль' });
+        }
+
+        res.status(200).json({ message: 'Авторизация успешна', userId: user.id });
+    } catch (error) {
+        console.error('Ошибка авторизации:', error);
+        res.status(500).json({ message: 'Ошибка сервера при авторизации' });
+    }
+});
+22)добавляем файл js/login.js
+const form = document.querySelector('form');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const data = {
+        login: form.login.value,
+        password: form.password.value,
+    };
+
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Добро пожаловать! Авторизация успешна.');
+            // Здесь можно перенаправить пользователя на главную страницу или в его профиль
+            window.location.href = '/dashboard.html'; // Пример
+        } else {
+            alert(`Ошибка: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Ошибка запроса:', error);
+        alert('Произошла ошибка. Попробуйте ещё раз.');
+    }
+});
+23)Обновляем login.html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Авторизация</h1>
+        <form>
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" required>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit" class="btn">Войти</button>
+        </form>
+    </div>
+    <script src="/js/login.js"></script>
+</body>
+</html>
+24)тестируем, должно выводиться всё
+25)создаём таблицу в базе данных orders
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    order_date TIMESTAMP DEFAULT NOW(),
+    address VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    preferred_date TIMESTAMP NOT NULL,
+    service_type VARCHAR(255) NOT NULL,
+    custom_service TEXT,
+    payment_method VARCHAR(50) NOT NULL
+);
+26)добавляем код в server.js
+// Маршрут для получения заявок
+app.get('/orders', async (req, res) => {
+  const userId = req.query.userId;
+
+  if (!userId) {
+      console.error('Отсутствует идентификатор пользователя.');
+      return res.status(400).json({ message: 'Отсутствует идентификатор пользователя.' });
+  }
+
+  try {
+      console.log(`Получение заявок для пользователя: ${userId}`);
+      const orders = await pool.query(
+          'SELECT * FROM orders WHERE user_id = $1 ORDER BY preferred_date DESC',
+          [userId]
+      );
+      console.log('Заявки получены:', orders.rows);
+      res.json(orders.rows);
+  } catch (err) {
+      console.error('Ошибка получения заявок:', err.message);
+      res.status(500).json({ message: 'Ошибка сервера.' });
+  }
+});
+// Добавить новую заявку
+app.post('/orders', async (req, res) => {
+  const { userId, address, phone, preferredDate, serviceType, customService, paymentMethod } = req.body;
+
+  try {
+      const result = await pool.query(
+          `INSERT INTO orders (user_id, address, phone, preferred_date, service_type, custom_service, payment_method) 
+          VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+          [userId, address, phone, preferredDate, serviceType, customService || null, paymentMethod]
+      );
+
+      res.status(201).json({ message: 'Заявка успешно создана', orderId: result.rows[0].id });
+  } catch (error) {
+      console.error('Ошибка создания заявки:', error);
+      res.status(500).json({ message: 'Ошибка сервера при создании заявки' });
+  }
+});
+27)Создание страницы orders.html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заявки</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Мои заявки</h1>
+        <button id="createOrderBtn" class="btn">Создать заявку</button>
+        <div id="ordersList">
+            <h2>История заявок</h2>
+            <ul id="orders"></ul>
+        </div>
+    </div>
+    <script src="/js/orders.js"></script>
+</body>
+</html>
+28)Создадим orders.js, чтобы получить заявки и отобразить их
+document.addEventListener('DOMContentLoaded', async () => {
+  const userId = localStorage.getItem('userId'); // ID пользователя из localStorage
+
+  if (!userId) {
+      alert('Вы не авторизованы!');
+      window.location.href = '/login.html';
+      return;
+  }
+
+  // Кнопка для создания новой заявки
+  document.getElementById('createOrderBtn').addEventListener('click', () => {
+      window.location.href = '/create-order.html';
+  });
+
+  try {
+      const response = await fetch(`/orders?userId=${userId}`);
+
+      if (response.ok) {
+          const orders = await response.json();
+          const ordersList = document.getElementById('orders');
+
+          if (orders.length === 0) {
+              ordersList.innerHTML = '<p>У вас пока нет заявок</p>';
+          } else {
+              orders.forEach(order => {
+                  const li = document.createElement('li');
+                  li.textContent = `Заявка от ${new Date(order.order_date).toLocaleDateString()} ${order.service_type} по адресу ${order.address}. Оплата: ${order.payment_method}.`;
+                  ordersList.appendChild(li);
+              });
+          }
+      } else {
+          alert('Не удалось загрузить заявки');
+      }
+  } catch (error) {
+      console.error('Ошибка загрузки заявок:', error);
+      alert('Произошла ошибка при загрузке заявок');
+  }
+});
+
+29)Создадим create-order.html для ввода данных новой заявки.
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать заявку</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Создать заявку</h1>
+        <form id="createOrderForm">
+            <label>Адрес:</label>
+            <input type="text" id="address" placeholder="Введите адрес" required>
+
+            <label>Контактный телефон:</label>
+            <input type="text" id="phone" placeholder="+7(XXX)-XXX-XX-XX" pattern="\+7\(\d{3}\)-\d{3}-\d{2}-\d{2}" required>
+
+            <label>Желаемая дата и время:</label>
+            <input type="datetime-local" id="preferredDate" required>
+
+            <label>Вид услуги:</label>
+            <select id="serviceType" required>
+                <option value="" disabled selected>Выберите услугу</option>
+                <option value="Общий клининг">Общий клининг</option>
+                <option value="Генеральная уборка">Генеральная уборка</option>
+                <option value="Послестроительная уборка">Послестроительная уборка</option>
+                <option value="Химчистка ковров и мебели">Химчистка ковров и мебели</option>
+            </select>
+
+            <label>
+                <input type="checkbox" id="customServiceCheckbox">
+                Иная услуга
+            </label>
+            <textarea id="customService" placeholder="Опишите услугу" disabled></textarea>
+
+            <label>Тип оплаты:</label>
+            <select id="paymentMethod" required>
+                <option value="Наличные">Наличные</option>
+                <option value="Банковская карта">Банковская карта</option>
+            </select>
+
+            <button type="submit" class="btn">Создать</button>
+        </form>
+    </div>
+    <script src="/js/create-order.js"></script>
+</body>
+</html>
+30)создадим новый файл create-order.js для обработки новой формы.
+document.addEventListener('DOMContentLoaded', () => {
+  const customServiceCheckbox = document.getElementById('customServiceCheckbox');
+  const customServiceField = document.getElementById('customService');
+
+  // Активация поля для описания услуги
+  customServiceCheckbox.addEventListener('change', () => {
+      customServiceField.disabled = !customServiceCheckbox.checked;
+  });
+
+  document.getElementById('createOrderForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const userId = localStorage.getItem('userId');
+      const address = document.getElementById('address').value;
+      const phone = document.getElementById('phone').value;
+      const preferredDate = document.getElementById('preferredDate').value;
+      const serviceType = document.getElementById('serviceType').value;
+      const customService = customServiceCheckbox.checked ? document.getElementById('customService').value : '';
+      const paymentMethod = document.getElementById('paymentMethod').value;
+
+      try {
+          const response = await fetch('/orders', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  userId,
+                  address,
+                  phone,
+                  preferredDate,
+                  serviceType,
+                  customService,
+                  paymentMethod,
+              }),
+          });
+
+          if (response.ok) {
+              alert('Заявка успешно создана');
+              window.location.href = '/orders.html';
+          } else {
+              alert('Не удалось создать заявку');
+          }
+      } catch (error) {
+          console.error('Ошибка создания заявки:', error);
+          alert('Произошла ошибка при создании заявки');
+      }
+  });
+});
+31)копались в стилях, допиливали
+32)добавляем админку
+ALTER TABLE orders
+ADD COLUMN status VARCHAR(20) DEFAULT 'новая',
+ADD COLUMN cancel_reason TEXT;
+33)добавляем в server.js 
+// Авторизация администратора
+app.post('/admin/login', (req, res) => {
+  const { login, password } = req.body;
+
+  if (login === 'adminka' && password === 'password') {
+    res.status(200).json({ message: 'Добро пожаловать, администратор!' });
+  } else {
+    res.status(401).json({ message: 'Неверные логин или пароль' });
+  }
+});
+
+// Получение всех заявок
+app.get('/admin/orders', async (req, res) => {
+  try {
+    const orders = await pool.query('SELECT * FROM orders');
+    res.json(orders.rows);
+  } catch (err) {
+    console.error('Ошибка получения заявок:', err);
+    res.status(500).json({ message: 'Ошибка сервера при получении заявок.' });
+  }
+});
+
+// Обновление статуса заявки
+app.put('/admin/orders/:id', async (req, res) => {
+  const { id } = req.params;
+  const { status, cancelReason } = req.body;
+
+  try {
+    await pool.query(
+      `UPDATE orders SET status = $1, cancel_reason = $2 WHERE id = $3`,
+      [status, cancelReason || null, id]
+    );
+    res.status(200).json({ message: 'Статус заявки обновлен!' });
+  } catch (err) {
+    console.error('Ошибка обновления статуса заявки:', err);
+    res.status(500).json({ message: 'Ошибка сервера при обновлении статуса.' });
+  }
+});

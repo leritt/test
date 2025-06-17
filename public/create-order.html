@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать заявку на перевозку</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-image {
+            height: 40px;
+        }
+
+        .logo-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+            padding: 0;
+            margin: 0;
+            align-items: center;
+        }
+
+        nav ul li {
+            margin: 0;
+        }
+
+        nav ul li a,
+        nav ul li button {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            color: white;
+            background-color: var(--button-color);
+        }
+
+        nav ul li button {
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background-color: white;
+            padding: 2rem 2.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+            color: var(--dark-color);
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .required-field::after {
+            content: " *";
+            color: red;
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="number"],
+        input[type="datetime-local"],
+        select {
+            padding: 8px 12px;
+            margin-bottom: 1.2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="datetime-local"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--button-color);
+            box-shadow: 0 0 6px var(--button-color);
+        }
+
+        .dimensions-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .dimensions-container input {
+            flex: 1;
+        }
+
+        .btn {
+            color: white;
+            padding: 0.7rem 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #customCargoField {
+            margin-bottom: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <img class="logo-image" src="/images/logo.png" alt="logo" />
+            <h1 class="logo-name">Я буду кушац</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/create-order.html">Создать заявку</a></li>
+                <li><a href="/orders.html">История заявок</a></li>
+                <li><button id="logout-btn">Выйти</button></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Создать заявку на перевозку</h1>
+        <form id="create-order-form">
+            <label for="transportDate" class="required-field">Дата и время перевозки:</label>
+            <input type="datetime-local" id="transportDate" name="transportDate" required>
+
+            <label for="cargoType" class="required-field">Тип груза:</label>
+            <select id="cargoType" name="cargoType" required>
+                <option value="">Выберите тип груза</option>
+                <option value="Хрупкое">Хрупкое</option>
+                <option value="Скоропортящееся">Скоропортящееся</option>
+                <option value="Требуется рефрижератор">Требуется рефрижератор</option>
+                <option value="Животные">Животные</option>
+                <option value="Жидкость">Жидкость</option>
+                <option value="Мебель">Мебель</option>
+                <option value="Мебель">Мусор</option>
+            </select>
+
+            <div id="customCargoField" style="display: none;">
+                <label for="customCargo" class="required-field">Укажите тип груза:</label>
+                <input type="text" id="customCargo" name="customCargo">
+            </div>
+
+            <label for="cargoWeight" class="required-field">Вес груза (кг):</label>
+            <input type="number" id="cargoWeight" name="cargoWeight" min="1" required>
+
+            <label class="required-field">Габариты груза (см):</label>
+            <div class="dimensions-container">
+                <input type="number" id="length" name="length" placeholder="Длина" min="1" required>
+                <input type="number" id="width" name="width" placeholder="Ширина" min="1" required>
+                <input type="number" id="height" name="height" placeholder="Высота" min="1" required>
+            </div>
+
+            <label for="fromAddress" class="required-field">Адрес отправления:</label>
+            <input type="text" id="fromAddress" name="fromAddress" required>
+
+            <label for="toAddress" class="required-field">Адрес доставки:</label>
+            <input type="text" id="toAddress" name="toAddress" required>
+
+            <label for="phone" class="required-field">Контактный телефон:</label>
+            <input type="tel" id="phone" name="phone" placeholder="+7(XXX)-XXX-XX-XX" required>
+
+            <button type="submit" class="btn">Создать заявку</button>
+        </form>
+    </div>
+    <script src="/js/create-order.js"></script>
+</body>
+
+</html>
