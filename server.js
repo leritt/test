@@ -70,12 +70,15 @@ app.get('/orders', async (req, res) => {
   try {
     const orders = await pool.query(
       `SELECT 
-        id, reservation_datetime, guests, phone, status, review_rating, review_text
-       FROM orders 
-       WHERE user_id = $1 
-       ORDER BY reservation_datetime DESC`,
+                id, reservation_datetime, guests, phone, status, review_rating, review_text
+             FROM orders 
+             WHERE user_id = $1 
+             ORDER BY reservation_datetime DESC`,
       [userId]
     );
+
+    // Добавим лог для отладки
+    console.log(`Found ${orders.rows.length} orders for user ${userId}`);
     res.json(orders.rows);
   } catch (err) {
     console.error('Ошибка получения бронирований:', err);
@@ -191,17 +194,16 @@ app.get('/admin/orders', async (req, res) => {
       INNER JOIN users ON orders.user_id = users.id
       ORDER BY orders.reservation_datetime DESC
     `);
-    
+
     res.json(orders.rows);
   } catch (err) {
     console.error('Ошибка получения заявок:', err);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Ошибка сервера при получении заявок',
-      error: err.message 
+      error: err.message
     });
   }
 });
-// Обновление статуса заявки
 // Обновление статуса заявки
 app.put('/admin/orders/:id', async (req, res) => {
   const { id } = req.params;
@@ -252,23 +254,29 @@ app.post('/orders/:id/review', async (req, res) => {
   }
 
   try {
-    // Проверяем существование заказа
-    const orderExists = await pool.query(
-      'SELECT id FROM orders WHERE id = $1',
+    // Проверяем существование и статус заказа
+    const order = await pool.query(
+      'SELECT id, status FROM orders WHERE id = $1',
       [id]
     );
 
-    if (orderExists.rows.length === 0) {
+    if (order.rows.length === 0) {
       return res.status(404).json({ message: 'Заказ не найден' });
+    }
+
+    if (order.rows[0].status !== 'подтверждена') {
+      return res.status(400).json({
+        message: 'Отзыв можно оставить только для подтвержденных бронирований'
+      });
     }
 
     // Обновляем отзыв
     await pool.query(
       `UPDATE orders SET 
-                review_rating = $1, 
-                review_text = $2,
-                reviewed_at = CURRENT_TIMESTAMP
-             WHERE id = $3`,
+        review_rating = $1, 
+        review_text = $2,
+        reviewed_at = CURRENT_TIMESTAMP
+       WHERE id = $3`,
       [rating, text.trim(), id]
     );
 
@@ -285,7 +293,6 @@ app.post('/orders/:id/review', async (req, res) => {
     });
   }
 });
-
 
 // Запуск сервера
 app.listen(PORT, () => {

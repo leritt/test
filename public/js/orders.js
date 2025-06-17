@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     <h3>Бронирование #${order.id}</h3>
     <p><strong>Дата и время:</strong> ${new Date(order.reservation_datetime).toLocaleString()}</p>
     <p><strong>Гостей:</strong> ${order.guests}</p>
-<p><strong>Телефон:</strong> ${order.phone.replace(/(\+7)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1($2)-$3-$4-$5')}</p>    <p><strong>Статус:</strong> ${order.status}</p>
+    <p><strong>Телефон:</strong> ${order.phone.replace(/(\+7)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1($2)-$3-$4-$5')}</p>
+    <p><strong>Статус:</strong> ${order.status}</p>
 
     <div class="review-section">
       ${order.review_text ? `
@@ -65,9 +66,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <p>${order.review_text}</p>
         </div>
-      ` : `
+      ` : order.status === 'подтверждена' ? `
         <button class="btn btn-small add-review-btn">Оставить отзыв</button>
-        <div class="review-form">
+        <div class="review-form" style="display: none;">
           <h4>Оцените посещение:</h4>
           <div class="stars-rating">
             ${[1, 2, 3, 4, 5].map(i =>
@@ -77,6 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           <textarea placeholder="Ваш отзыв"></textarea>
           <button class="btn btn-small submit-review-btn">Отправить отзыв</button>
         </div>
+      ` : `
+        <p class="review-notice">Отзыв можно оставить только для подтвержденных бронирований</p>
       `}
     </div>
   </div>
@@ -84,63 +87,68 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             ordersList.appendChild(li);
 
-            // Остальной код обработки отзывов остается без изменений
-            if (!order.review_text) {
+            // Обработка отзывов только для заявок без отзыва
+            if (!order.review_text && order.status === 'подтверждена') {
                 const card = li.querySelector('.order-card');
+                const addReviewBtn = card.querySelector('.add-review-btn');
+                const reviewForm = card.querySelector('.review-form');
                 const stars = card.querySelectorAll('.star[data-value]');
+                const submitBtn = card.querySelector('.submit-review-btn');
                 let selectedRating = 0;
 
-                stars.forEach(star => {
-                    star.addEventListener('click', () => {
-                        const value = parseInt(star.dataset.value);
-                        selectedRating = value;
-                        stars.forEach((s, i) => {
-                            s.classList.toggle('active', i < value);
+                if (addReviewBtn && reviewForm && stars && submitBtn) {
+                    stars.forEach(star => {
+                        star.addEventListener('click', () => {
+                            const value = parseInt(star.dataset.value);
+                            selectedRating = value;
+                            stars.forEach((s, i) => {
+                                s.classList.toggle('active', i < value);
+                            });
                         });
                     });
-                });
 
-                card.querySelector('.add-review-btn').addEventListener('click', (e) => {
-                    e.target.style.display = 'none';
-                    card.querySelector('.review-form').style.display = 'block';
-                });
+                    addReviewBtn.addEventListener('click', (e) => {
+                        e.target.style.display = 'none';
+                        reviewForm.style.display = 'block';
+                    });
 
-                card.querySelector('.submit-review-btn').addEventListener('click', async () => {
-                    const reviewText = card.querySelector('textarea').value.trim();
-                    if (selectedRating === 0) {
-                        alert('Пожалуйста, оцените услугу');
-                        return;
-                    }
-                    if (!reviewText) {
-                        alert('Пожалуйста, напишите отзыв');
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`/orders/${order.id}/review`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                rating: selectedRating,
-                                text: reviewText
-                            }),
-                        });
-
-                        const result = await response.json();
-
-                        if (response.ok) {
-                            alert(result.message);
-                            location.reload();
-                        } else {
-                            throw new Error(result.message || 'Ошибка при отправке отзыва');
+                    submitBtn.addEventListener('click', async () => {
+                        const reviewText = card.querySelector('textarea').value.trim();
+                        if (selectedRating === 0) {
+                            alert('Пожалуйста, оцените услугу');
+                            return;
                         }
-                    } catch (error) {
-                        console.error('Ошибка:', error);
-                        alert(error.message || 'Не удалось отправить отзыв. Пожалуйста, попробуйте позже.');
-                    }
-                });
+                        if (!reviewText) {
+                            alert('Пожалуйста, напишите отзыв');
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch(`/orders/${order.id}/review`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    rating: selectedRating,
+                                    text: reviewText
+                                }),
+                            });
+
+                            const result = await response.json();
+
+                            if (response.ok) {
+                                alert(result.message);
+                                location.reload();
+                            } else {
+                                throw new Error(result.message || 'Ошибка при отправке отзыва');
+                            }
+                        } catch (error) {
+                            console.error('Ошибка:', error);
+                            alert(error.message || 'Не удалось отправить отзыв. Пожалуйста, попробуйте позже.');
+                        }
+                    });
+                }
             }
         });
     } catch (error) {
