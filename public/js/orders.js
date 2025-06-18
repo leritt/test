@@ -61,8 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             li.innerHTML = `
   <div class="order-card" data-order-id="${order.id}">
     <h3>Бронирование #${order.id}</h3>
-    <p><strong>Дата и время:</strong> ${new Date(order.reservation_datetime).toLocaleString()}</p>
-    <p><strong>Гостей:</strong> ${order.guests}</p>
+<p><strong>Дата и время:</strong> ${new Date(order.reservation_datetime).toLocaleDateString()} ${new Date(order.reservation_datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>    <p><strong>Гостей:</strong> ${order.guests}</p>
     <p><strong>Телефон:</strong> ${formattedPhone}</p>
     <p><strong>Статус:</strong> ${order.status}</p>
 

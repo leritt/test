@@ -173,8 +173,11 @@
     <div class="container">
         <h1>Создать заявку на перевозку</h1>
         <form id="create-order-form">
-            <label>Дата и время:</label>
-            <input type="datetime-local" name="reservationDateTime" required>
+            <label>Дата:</label>
+            <input type="date" id="reservationDate" name="reservationDate" required>
+
+            <label>Время:</label>
+            <input type="time" id="reservationTime" name="reservationTime" required min="10:00" max="22:00" step="1800">
 
             <label>Количество гостей:</label>
             <input type="number" name="guests" min="1" max="10" required>

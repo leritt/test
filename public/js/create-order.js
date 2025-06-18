@@ -44,20 +44,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Получаем форму
-    const form = e.target;
-
     // Получаем значения из формы
-    const formData = new FormData(form);
-    const reservationDateTime = formData.get('reservationDateTime');
-    const guests = formData.get('guests');
-    const phone = formData.get('phone');
+    const reservationDate = document.getElementById('reservationDate').value;
+    const reservationTime = document.getElementById('reservationTime').value;
+    const guests = document.querySelector('input[name="guests"]').value;
+    const phone = document.querySelector('input[name="phone"]').value;
 
     // Проверка данных
-    if (!reservationDateTime || !guests || !phone) {
+    if (!reservationDate || !reservationTime || !guests || !phone) {
       alert('Пожалуйста, заполните все поля');
       return;
     }
+
+    // Формируем дату и время в ISO формате
+    const reservationDateTime = `${reservationDate}T${reservationTime}:00`;
 
     try {
       const response = await fetch('/orders', {

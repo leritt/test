@@ -172,7 +172,7 @@ app.post('/orders', async (req, res) => {
 app.post('/admin/login', (req, res) => {
   const { login, password } = req.body;
 
-  if (login === 'admin' && password === 'gruzovik2024') {
+  if (login === 'admin' && password === 'restaurant') {
     res.status(200).json({ message: 'Добро пожаловать, администратор!' });
   } else {
     res.status(401).json({ message: 'Неверные логин или пароль' });
@@ -209,21 +209,40 @@ app.put('/admin/orders/:id', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  // Проверяем допустимые статусы (должны соответствовать CHECK в таблице)
-  const allowedStatuses = ['новая', 'подтверждена', 'отменена'];
+  // Проверяем допустимые статусы
+  const allowedStatuses = ['новая', 'посещение состоялось', 'отменена'];
   if (!allowedStatuses.includes(status)) {
-    return res.status(400).json({ message: 'Недопустимый статус заявки' });
+    return res.status(400).json({
+      success: false,
+      message: `Недопустимый статус заявки. Допустимые значения: ${allowedStatuses.join(', ')}`
+    });
   }
 
   try {
-    await pool.query(
-      'UPDATE orders SET status = $1 WHERE id = $2',
+    const result = await pool.query(
+      'UPDATE orders SET status = $1 WHERE id = $2 RETURNING *',
       [status, id]
     );
-    res.status(200).json({ message: 'Статус заявки обновлен' });
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Заявка не найдена'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Статус заявки обновлен',
+      order: result.rows[0]
+    });
   } catch (err) {
     console.error('Ошибка обновления заявки:', err);
-    res.status(500).json({ message: 'Ошибка сервера при обновлении заявки' });
+    res.status(500).json({
+      success: false,
+      message: 'Ошибка сервера при обновлении заявки',
+      error: err.message
+    });
   }
 });
 
@@ -264,7 +283,7 @@ app.post('/orders/:id/review', async (req, res) => {
       return res.status(404).json({ message: 'Заказ не найден' });
     }
 
-    if (order.rows[0].status !== 'подтверждена') {
+    if (order.rows[0].status !== 'посещение состоялось') {
       return res.status(400).json({
         message: 'Отзыв можно оставить только для подтвержденных бронирований'
       });
