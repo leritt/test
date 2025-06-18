@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <p>${order.review_text}</p>
         </div>
-      ` : order.status === 'подтверждена' ? `
+      ` : order.status === 'посещение состоялось' ? `
         <button class="btn btn-small add-review-btn">Оставить отзыв</button>
         <div class="review-form" style="display: none;">
           <h4>Оцените посещение:</h4>
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ordersList.appendChild(li);
 
             // Обработка отзывов только для заявок без отзыва
-            if (!order.review_text && order.status === 'подтверждена') {
+            if (!order.review_text && order.status === 'посещение состоялось') {
                 const card = li.querySelector('.order-card');
                 const addReviewBtn = card.querySelector('.add-review-btn');
                 const reviewForm = card.querySelector('.review-form');

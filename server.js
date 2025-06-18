@@ -286,8 +286,7 @@ app.post('/orders/:id/review', async (req, res) => {
     await pool.query(
       `UPDATE orders SET 
         review_rating = $1, 
-        review_text = $2,
-        reviewed_at = CURRENT_TIMESTAMP
+        review_text = $2
        WHERE id = $3`,
       [rating, text.trim(), id]
     );
