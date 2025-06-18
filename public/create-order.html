@@ -4,25 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать заявку на перевозку</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Забронировать столик</title>
+    <!-- <link rel="stylesheet" href="/css/styles.css"> -->
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #e67e22;
+            --dark-color: #2c3e50;
+            --light-color: #f9f5f0;
+            --border-color: #e0c9b4;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --star-color: #f1c40f;
         }
 
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        /* Шапка */
         .header {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -32,126 +53,159 @@
         }
 
         .logo-image {
-            height: 40px;
+            height: 50px;
+            width: auto;
         }
 
         .logo-name {
-            font-size: 1.5rem;
-            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
         }
 
         nav ul {
-            list-style: none;
             display: flex;
-            gap: 1rem;
-            padding: 0;
-            margin: 0;
+            list-style: none;
+            gap: 1.5rem;
             align-items: center;
         }
 
-        nav ul li {
-            margin: 0;
+        nav a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
         }
 
-        nav ul li a,
-        nav ul li button {
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        #logout-btn {
+            background-color: var(--primary-color);
+            color: white;
             border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: 500;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-            color: white;
-            background-color: var(--button-color);
+            transition: background-color 0.3s;
         }
 
-        nav ul li button {
-            font-family: inherit;
-            font-size: 1rem;
+        #logout-btn:hover {
+            background-color: #c0392b;
         }
 
+        /* Основной контент */
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 2rem auto;
-            background-color: white;
-            padding: 2rem 2.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
+            padding: 0 2rem;
         }
 
-        h1 {
-            margin-bottom: 1.5rem;
+        .container h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
             color: var(--dark-color);
             text-align: center;
         }
 
-        form {
-            display: flex;
-            flex-direction: column;
+        /* Форма */
+        #create-order-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
-        label {
-            margin-bottom: 0.4rem;
-            font-weight: 600;
+        #create-order-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
             color: var(--dark-color);
         }
 
-        .required-field::after {
-            content: " *";
-            color: red;
-            margin-left: 2px;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        input[type="email"],
-        input[type="number"],
-        input[type="datetime-local"],
-        select {
-            padding: 8px 12px;
-            margin-bottom: 1.2rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="tel"]:focus,
-        input[type="email"]:focus,
-        input[type="number"]:focus,
-        input[type="datetime-local"]:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--button-color);
-            box-shadow: 0 0 6px var(--button-color);
-        }
-
-        .dimensions-container {
-            display: flex;
-            gap: 10px;
+        #create-order-form input {
+            width: 100%;
+            padding: 0.8rem;
             margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
         }
 
-        .dimensions-container input {
-            flex: 1;
+        #create-order-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
 
-        .btn {
+        #create-order-form button {
+            background-color: var(--primary-color);
             color: white;
-            padding: 0.7rem 1.2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
             border: none;
-            border-radius: 6px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            transition: background-color 0.3s;
         }
 
-        #customCargoField {
-            margin-bottom: 1.2rem;
+        #create-order-form button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Валидация */
+        #create-order-form input:invalid {
+            border-color: var(--warning-color);
+        }
+
+        #create-order-form input:valid {
+            border-color: #ccc;
+        }
+
+        /* Подсказки */
+        #create-order-form input::placeholder {
+            color: #aaa;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: 1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            #create-order-form {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-name {
+                font-size: 1.5rem;
+            }
+
+            .container h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>

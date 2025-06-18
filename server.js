@@ -13,11 +13,6 @@ app.use(express.json());
 // Подключение статических файлов
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Маршрут для главной страницы
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
-
 app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
@@ -165,8 +160,6 @@ app.post('/orders', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера при бронировании' });
   }
 });
-
-
 
 // Авторизация администратора
 app.post('/admin/login', (req, res) => {

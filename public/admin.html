@@ -5,43 +5,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Админка</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <!-- <link rel="stylesheet" href="/css/styles.css"> -->
   <style>
     :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #3498db;
+      --primary-color: #e74c3c;
+      --secondary-color: #e67e22;
+      --dark-color: #2c3e50;
+      --light-color: #f9f5f0;
+      --border-color: #e0c9b4;
       --success-color: #27ae60;
       --warning-color: #f39c12;
-      --danger-color: #e74c3c;
-      --light-color: #ecf0f1;
-      --dark-color: #2c3e50;
-      --text-color: #333;
-      --border-color: #ddd;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --info-color: #3498db;
+      --star-color: #f1c40f;
     }
 
-
+    /* Общие стили */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-color);
+      color: var(--dark-color);
       line-height: 1.6;
-      background-color: #f5f7fa;
-      color: var(--text-color);
     }
 
+    /* Шапка */
     .header {
-      background-color: var(--primary-color);
-      color: white;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: var(--shadow);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -54,272 +53,273 @@
     }
 
     .logo-image {
-      height: 40px;
+      height: 50px;
+      width: auto;
     }
 
     .logo-name {
-      font-size: 1.5rem;
-      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      font-weight: 700;
     }
 
-    .btn {
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
+    #logout-btn {
+      background-color: var(--primary-color);
+      color: white;
       border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
       cursor: pointer;
       font-weight: 500;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+      transition: all 0.3s;
     }
 
-    .btn-logout {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    .btn-logout:hover {
+    #logout-btn:hover {
       background-color: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
+    /* Основной контент */
     .container {
       max-width: 1200px;
       margin: 2rem auto;
-      padding: 0 1rem;
+      padding: 0 2rem;
     }
 
-    .page-title {
-      font-size: 1.8rem;
+    .container h1 {
+      font-size: 2rem;
       margin-bottom: 1.5rem;
       color: var(--dark-color);
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .container h1::after {
+      content: "";
+      display: block;
+      width: 80px;
+      height: 4px;
+      background-color: var(--primary-color);
+      margin-top: 0.5rem;
+      border-radius: 2px;
+    }
+
+    /* Блок фильтров */
+    .filters {
       display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .page-title i {
-      color: var(--secondary-color);
-    }
-
-    .card {
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
       background-color: white;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
-    .table-container {
-      overflow-x: auto;
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      min-width: 200px;
     }
 
-    table {
+    .filter-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark-color);
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 0.6rem;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.1);
+    }
+
+    #apply-filters {
+      align-self: flex-end;
+      background-color: var(--primary-color);
+    }
+
+    #reset-filters {
+      align-self: flex-end;
+      background-color: var(--dark-color);
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background-color: var(--dark-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: #1a252f;
+    }
+
+    /* Таблица заказов */
+    #ordersTable {
       width: 100%;
       border-collapse: collapse;
-      min-width: 800px;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
 
-    th,
-    td {
+    #ordersTable thead {
+      background-color: var(--dark-color);
+      color: white;
+    }
+
+    #ordersTable th {
       padding: 1rem;
       text-align: left;
+      font-weight: 500;
+    }
+
+    #ordersTable td {
+      padding: 1rem;
       border-bottom: 1px solid var(--border-color);
     }
 
-    td {
-      vertical-align: middle;
+    #ordersTable tr:last-child td {
+      border-bottom: none;
     }
 
-    th {
-      background-color: var(--primary-color);
-      color: white;
-      font-weight: 500;
-      position: sticky;
-      top: 0;
+    #ordersTable tbody tr:hover {
+      background-color: rgba(231, 76, 60, 0.05);
     }
 
-    tr:hover {
-      background-color: rgba(0, 0, 0, 0.02);
-    }
-
+    /* Элементы управления статусом */
     .status-controls {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.3rem;
+      gap: 0.5rem;
     }
 
     .status-select {
-      padding: 0.5rem;
-      margin-bottom: 0.3rem;
-      border-radius: 4px;
+      flex-grow: 1;
+      padding: 0.4rem;
       border: 1px solid var(--border-color);
-      font-size: 0.9rem;
-      min-width: 120px;
+      border-radius: 5px;
+      transition: all 0.3s;
     }
 
-    .btn-action {
-      padding: 0.5rem;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .status-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
     }
 
-    .btn-update {
+    .update-btn {
       background-color: var(--success-color);
       color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
     }
 
-    .btn-update:hover {
+    .update-btn:hover {
       background-color: #219653;
     }
 
-    .btn-delete {
-      background-color: var(--danger-color);
+    .delete-btn {
+      background-color: var(--primary-color);
       color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
     }
 
-    .btn-delete:hover {
+    .delete-btn:hover {
       background-color: #c0392b;
     }
 
-    .empty-state {
-      padding: 2rem;
+    /* Сообщение "Нет заявок" */
+    #ordersTable tbody tr td[colspan] {
       text-align: center;
-      color: #7f8c8d;
+      padding: 2rem;
+      color: #666;
     }
 
-    .empty-state i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #bdc3c7;
-    }
+    /* Адаптивность */
+    @media (max-width: 1024px) {
+      .filters {
+        flex-direction: column;
+      }
 
-    .status-new {
-      color: #3498db;
-      font-weight: 500;
-    }
+      .filter-group {
+        width: 100%;
+      }
 
-    .status-in-progress {
-      color: #f39c12;
-      font-weight: 500;
-    }
-
-    .status-cancelled {
-      color: #e74c3c;
-      font-weight: 500;
+      #apply-filters,
+      #reset-filters {
+        align-self: flex-start;
+      }
     }
 
     @media (max-width: 768px) {
       .header {
-        padding: 0.8rem 1rem;
+        flex-direction: column;
+        padding: 1rem;
       }
 
-      .logo-name {
-        font-size: 1.2rem;
+      .logo {
+        margin-bottom: 1rem;
       }
 
       .container {
-        margin: 1rem auto;
+        padding: 0 1rem;
       }
 
-      .page-title {
-        font-size: 1.4rem;
+      #ordersTable {
+        display: block;
+        overflow-x: auto;
       }
 
-      th,
-      td {
-        padding: 0.8rem;
+      .status-controls {
+        flex-direction: column;
       }
     }
 
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 12px 24px;
-      border-radius: 4px;
-      color: white;
-      font-weight: 500;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
+    @media (max-width: 480px) {
+      .logo-name {
+        font-size: 1.5rem;
+      }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+      .container h1 {
+        font-size: 1.5rem;
+      }
 
-    .toast-success {
-      background-color: var(--success-color);
-    }
-
-    .toast-error {
-      background-color: var(--danger-color);
-    }
-
-    .status-select {
-      padding: 5px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: 100%;
-    }
-
-    .actions {
-      display: flex;
-      gap: 5px;
-    }
-
-    .update-btn,
-    .delete-btn {
-      padding: 5px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .update-btn {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    .update-btn:hover {
-      background-color: #45a049;
-    }
-
-    .update-btn:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-    }
-
-    .delete-btn {
-      background-color: #f44336;
-      color: white;
-    }
-
-    .delete-btn:hover {
-      background-color: #d32f2f;
-    }
-
-    input[type="date"],
-    input[type="time"] {
-      padding: 8px 12px;
-      margin-bottom: 1.2rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 1rem;
-      font-family: inherit;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
+      .btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
@@ -462,11 +462,62 @@
         const deleteBtn = row.querySelector('.delete-btn');
 
         updateBtn.addEventListener('click', async () => {
-          // Обработчик сохранения...
+          const status = statusSelect.value;
+          updateBtn.disabled = true; // Блокируем кнопку на время запроса
+          updateBtn.textContent = 'Сохранение...';
+
+          try {
+            const updateResponse = await fetch(`/admin/orders/${order.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                status: status
+              }),
+            });
+
+            const result = await updateResponse.json();
+
+            if (updateResponse.ok) {
+              // Обновляем только статус в таблице, не перезагружая страницу
+              statusSelect.value = status;
+              alert(result.message);
+            } else {
+              throw new Error(result.message || 'Ошибка обновления');
+            }
+          } catch (error) {
+            console.error('Ошибка обновления:', error);
+            alert(error.message || 'Не удалось обновить статус');
+          } finally {
+            updateBtn.disabled = false;
+            updateBtn.textContent = 'Сохранить';
+          }
         });
 
         deleteBtn.addEventListener('click', async () => {
-          // Обработчик удаления...
+          if (confirm('Вы уверены, что хотите удалить эту заявку?')) {
+            try {
+              const deleteResponse = await fetch(`/admin/orders/${order.id}`, {
+                method: 'DELETE'
+              });
+
+              if (deleteResponse.ok) {
+                alert('Заявка удалена');
+                row.remove();
+
+                // Если это была последняя заявка, покажем сообщение
+                if (tableBody.querySelectorAll('tr').length === 0) {
+                  tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет заявок</td></tr>';
+                }
+              } else {
+                throw new Error('Ошибка удаления');
+              }
+            } catch (error) {
+              console.error('Ошибка удаления:', error);
+              alert('Не удалось удалить заявку');
+            }
+          }
         });
 
         tableBody.appendChild(row);
